@@ -1,28 +1,25 @@
-# ✅ Base image with Python 3.11
-FROM python:3.11
+FROM python:3.11-slim
 
-# ✅ Install Java (for 'javac') and other compilers
+# Install required tools: Java (javac), g++, node, npm
 RUN apt-get update && apt-get install -y \
     default-jdk \
     g++ \
-    nodejs \
-    npm \
+    curl \
+    && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs \
     && apt-get clean
 
-# ✅ Optional: install Node.js if JS runner uses it
-RUN npm install -g node
-
-# ✅ Set working directory inside container
+# Set working directory
 WORKDIR /app
 
-# ✅ Copy all backend files into the image
+# Copy project files
 COPY . .
 
-# ✅ Install Python dependencies
+# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# ✅ Expose the port your app runs on (usually 5000 for Flask/FastAPI)
+# Expose port (adjust if needed)
 EXPOSE 5000
 
-# ✅ Run your backend app
+# Start the backend (change this if you're using FastAPI or something else)
 CMD ["python", "main.py"]
