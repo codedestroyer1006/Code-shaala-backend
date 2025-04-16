@@ -1,7 +1,6 @@
+FROM python:3.11-slim
 
-FROM python:alpine
-
-# Install Java, g++, Node.js
+# Install compilers and tools
 RUN apt-get update && apt-get install -y \
     default-jdk \
     g++ \
@@ -13,13 +12,13 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /app
 
-# Copy everything into the container
-COPY . .
+# Copy contents from backend/ into container
+COPY backend/ .
 
-# Install Python dependencies
+# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose port (Flask or FastAPI)
+# Expose port
 EXPOSE 5000
 
 # Run your app
