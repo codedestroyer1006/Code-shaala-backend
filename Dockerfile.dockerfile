@@ -1,21 +1,24 @@
+# Use Python as base image
 FROM python:3.11-slim
 
-# Install required system packages
-RUN apt-get update && \
-    apt-get install -y openjdk-17-jdk gcc g++ curl && \
-    apt-get clean
+# Install required packages
+RUN apt-get update && apt-get install -y \
+    default-jdk \
+    g++ \
+    curl \
+    && apt-get clean
 
 # Set working directory
 WORKDIR /app
 
-# Copy all backend files
-COPY . .
+# Copy code
+COPY backend/ .
 
-# Install Python dependencies
+# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose the port
+# Expose port
 EXPOSE 5000
 
-# Run the app
+# Start Flask app
 CMD ["python", "main.py"]
