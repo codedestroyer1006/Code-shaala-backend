@@ -1,6 +1,6 @@
 FROM python:3.11-slim
 
-# Install required tools: Java (javac), g++, node, npm
+# Install Java, g++, Node.js (for code execution)
 RUN apt-get update && apt-get install -y \
     default-jdk \
     g++ \
@@ -9,17 +9,17 @@ RUN apt-get update && apt-get install -y \
     && apt-get install -y nodejs \
     && apt-get clean
 
-# Set working directory
+# Set the correct working directory
 WORKDIR /app
 
-# Copy project files
+# Copy everything into the container's /app directory
 COPY . .
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose port (adjust if needed)
+# Expose the port your app runs on
 EXPOSE 5000
 
-# Start the backend (change this if you're using FastAPI or something else)
+# Run your backend script
 CMD ["python", "main.py"]
