@@ -1,25 +1,21 @@
 FROM python:3.11-slim
 
-# Install compilers and tools
-RUN apt-get update && apt-get install -y \
-    default-jdk \
-    g++ \
-    curl \
-    && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
-    && apt-get install -y nodejs \
-    && apt-get clean
+# Install required system packages
+RUN apt-get update && \
+    apt-get install -y openjdk-17-jdk gcc g++ curl && \
+    apt-get clean
 
 # Set working directory
 WORKDIR /app
 
-# Copy contents from backend/ into container
-COPY backend/ .
+# Copy all backend files
+COPY . .
 
-# Install dependencies
+# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose port
+# Expose the port
 EXPOSE 5000
 
-# Run your app
+# Run the app
 CMD ["python", "main.py"]
