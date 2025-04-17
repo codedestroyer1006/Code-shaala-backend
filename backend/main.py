@@ -33,7 +33,6 @@ def execute_code():
     return jsonify(result)
 
 if __name__ == "__main__":
-=======
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from compilers.cpp_runner import run_cpp
