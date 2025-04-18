@@ -33,3 +33,12 @@ def execute_code():
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
+from compilers.java_runner import run_java
+
+@app.post("/execute")
+async def execute_code(payload: dict):
+    language = payload.get("language")
+    code = payload.get("code")
+
+    if language == "java":
+        return run_java(code)
