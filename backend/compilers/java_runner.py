@@ -1,6 +1,7 @@
 import subprocess
 import os
 import uuid
+import re
 
 def run_java(code):
     file_id = str(uuid.uuid4().hex)
@@ -9,27 +10,33 @@ def run_java(code):
     java_filepath = f"/tmp/{java_filename}"
     class_file = f"/tmp/{class_name}.class"
 
-    # Clean up any previous Main.java or Main.class to avoid stale code
+    # Extract the original class name
+    class_match = re.search(r'public\s+class\s+(\w+)', code)
+    if not class_match:
+        return {"error": "❌ No public class found in the code."}
+    
+    original_class_name = class_match.group(1)
+
+    # Rename the original class name to 'Main'
+    code = code.replace(f'public class {original_class_name}', f'public class {class_name}', 1)
+
+    # Clean old files
     if os.path.exists(java_filepath):
         os.remove(java_filepath)
     if os.path.exists(class_file):
         os.remove(class_file)
 
-    # Ensure class name is consistent
-    if "public class" in code:
-        code = code.replace("public class", f"public class {class_name}", 1)
-
-    # Write the Java code to file
+    # Write updated code
     with open(java_filepath, "w") as f:
         f.write(code)
 
     try:
-        # Compile the Java file
+        # Compile
         compile = subprocess.run(["javac", java_filepath], capture_output=True, text=True)
         if compile.returncode != 0:
             return {"error": compile.stderr.strip()}
 
-        # Execute the compiled class
+        # Run
         run = subprocess.run(["java", "-cp", "/tmp", class_name], capture_output=True, text=True)
         if run.returncode != 0:
             return {"error": run.stderr.strip()}
