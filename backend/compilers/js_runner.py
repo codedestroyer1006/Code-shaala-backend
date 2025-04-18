@@ -1,31 +1,27 @@
-
 import subprocess
+import uuid
+import os
 
 def run_js(code):
-    filename = "script.js"
+    unique_id = uuid.uuid4().hex
+    filename = f"/tmp/program_{unique_id}.js"
 
     try:
-        # Write JavaScript code to file
         with open(filename, "w") as f:
             f.write(code)
 
-        # Run JavaScript using Node.js
-        run_process = subprocess.run(
+        run = subprocess.run(
             ["node", filename], capture_output=True, text=True, timeout=5
         )
 
-        # Check for errors
-        if run_process.returncode != 0:
-            return {"error": "Runtime Error", "details": run_process.stderr}
-
-        return {"output": run_process.stdout}
-
+        return {
+            "output": run.stdout.strip(),
+            "error": run.stderr.strip() if run.returncode != 0 else ""
+        }
     except subprocess.TimeoutExpired:
         return {"error": "Execution timed out"}
-
+    except Exception as e:
+        return {"error": str(e)}
     finally:
-        # Clean up
-        import os
         if os.path.exists(filename):
             os.remove(filename)
-
