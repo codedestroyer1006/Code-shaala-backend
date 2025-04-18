@@ -6,7 +6,7 @@ import uuid
 def run_cpp(code, user_input=""):
     unique_id = uuid.uuid4().hex
     filename = f"program_{unique_id}.cpp"
-    output_file = f"program_{unique_id}.exe"
+   output_file = f"program_{unique_id}"
 
     try:
         with open(filename, "w") as f:
