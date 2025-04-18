@@ -1,16 +1,20 @@
 FROM python:3.11-slim
 
 # Install Java
-RUN apt-get update && apt-get install -y default-jdk
+RUN apt-get update && \
+    apt-get install -y default-jdk && \
+    apt-get clean
 
-# Set working directory
+# Set workdir
 WORKDIR /app
 
-# Copy all project files
-COPY . .
+# Copy and install requirements
+COPY backend/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Install Python dependencies
-RUN pip install -r backend/requirements.txt
+# Copy project files
+COPY backend/ .
 
-# Run your app
-CMD ["python", "backend/main.py"]
+# Expose port and run
+EXPOSE 8000
+CMD ["python", "main.py"]
