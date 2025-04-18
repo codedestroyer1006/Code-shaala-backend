@@ -3,14 +3,17 @@ FROM python:3.11-slim
 # Install Java
 RUN apt-get update && apt-get install -y default-jdk
 
-# Set working dir
+# Set working directory
 WORKDIR /app
 
-# Copy files
+# Copy the entire repo (including backend folder)
 COPY . .
 
-# Install Python dependencies
-RUN pip install -r requirements.txt
+# Install dependencies from the correct path
+RUN pip install -r backend/requirements.txt
 
-# Start the server
+# Set working dir to backend to run the app
+WORKDIR /app/backend
+
+# Run the backend server
 CMD ["python", "main.py"]
