@@ -1,4 +1,3 @@
-
 import subprocess
 import os
 import uuid
@@ -6,7 +5,7 @@ import uuid
 def run_cpp(code, user_input=""):
     unique_id = uuid.uuid4().hex
     filename = f"program_{unique_id}.cpp"
-   output_file = f"program_{unique_id}"
+    output_file = f"program_{unique_id}"  # No .exe for Linux environments like Render
 
     try:
         with open(filename, "w") as f:
@@ -32,8 +31,7 @@ def run_cpp(code, user_input=""):
     except subprocess.TimeoutExpired:
         return {"error": "Execution timed out"}
     finally:
-        os.remove(filename)
+        if os.path.exists(filename):
+            os.remove(filename)
         if os.path.exists(output_file):
             os.remove(output_file)
-            
-
