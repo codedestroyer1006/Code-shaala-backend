@@ -1,26 +1,26 @@
 FROM python:3.11-slim
 
-# Install Java, Node.js, and other dependencies
+# Install Java, Node.js, g++, and other dependencies
 RUN apt-get update && \
-    apt-get install -y default-jdk curl && \
+    apt-get install -y default-jdk curl g++ && \
     curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
     apt-get install -y nodejs && \
     apt-get clean
 
-# Confirm installations (optional for debug)
-RUN java -version && node -v && npm -v
+# Confirm installations (optional debugging)
+RUN java -version && node -v && g++ --version
 
 # Set working directory
 WORKDIR /app
 
-# Copy the entire project
+# Copy your entire app
 COPY . .
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r backend/requirements.txt
 
-# Move into backend folder for runtime
+# Set working directory to backend to run the server
 WORKDIR /app/backend
 
-# Start the Python server
+# Run the backend server
 CMD ["python", "main.py"]
