@@ -3,25 +3,24 @@ import uuid
 import os
 
 def run_js(code):
-    unique_id = uuid.uuid4().hex
-    filename = f"/tmp/program_{unique_id}.js"
+    file_id = uuid.uuid4().hex
+    filename = f"/tmp/{file_id}.js"
+
+    with open(filename, "w") as f:
+        f.write(code)
 
     try:
-        with open(filename, "w") as f:
-            f.write(code)
-
-        run = subprocess.run(
+        result = subprocess.run(
             ["node", filename], capture_output=True, text=True, timeout=5
         )
 
         return {
-            "output": run.stdout.strip(),
-            "error": run.stderr.strip() if run.returncode != 0 else ""
+            "output": result.stdout.strip(),
+            "error": result.stderr.strip() if result.returncode != 0 else ""
         }
+    except FileNotFoundError:
+        return {"error": "Node.js is not installed on the server."}
     except subprocess.TimeoutExpired:
-        return {"error": "Execution timed out"}
-    except Exception as e:
-        return {"error": str(e)}
+        return {"error": "Execution timed out."}
     finally:
-        if os.path.exists(filename):
-            os.remove(filename)
+        os.remove(filename)
